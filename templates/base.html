@@ -1,0 +1,21 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block css %}{% endblock %}
+</head>
+<body>
+{% include 'include/navi.html' %}
+{% include 'include/slider.html' %}
+{% block content %} {% endblock %}
+{% block pagi %} {% endblock %}
+
+{% include 'include/footer.html' %}
+</body>

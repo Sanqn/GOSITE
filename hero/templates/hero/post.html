@@ -1,0 +1,11 @@
+{% extends 'hero/base.html' %}
+
+{% block content %}
+<h1>{{person.title}}</h1>
+
+{% if person.image %}
+<p><img class="img-article-left" src="{{person.image.url}}"></p>
+{% endif %}
+
+{{person.content|safe}}
+{% endblock %}

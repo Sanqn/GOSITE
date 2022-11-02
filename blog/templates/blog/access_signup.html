@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SignUp{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'blog/css/style.css' %}"> <!--подключаем css-->
+{% endblock %}
+
+{% block content %}
+<div id='signup_access_container' class="container">
+    <div class="row center-lg">
+        <div class="col-lg-3">
+        </div>
+        <div class="col-lg-6">
+            <div class="text-center">
+                <h1 class="h3 mb-4 mt-4 font-weight-normal">Вы зарегистрированы!</h1>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

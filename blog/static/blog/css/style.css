@@ -1,0 +1,46 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,600,700,300,800);
+/***********************
+********* content ******
+************************/
+
+#main_content {
+    background: #c5c5c5;
+}
+
+.card-body1 {
+    border-radius: 5px;
+    border: 2px solid #4E4E4E;
+    margin-bottom: 20px;
+}
+
+#signup_container {
+    margin-bottom: 20px;
+}
+#signup_access_container {
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+
+#signup_access_container h1{
+  padding: 1rem;
+  position: relative;
+  border-radius: 20px;
+  color: white;
+  background: linear-gradient(to right, green, blue);
+  padding: 3px;
+}
+
+#table {
+    border-radius: 15px;
+    border: 6px solid #7922CC;
+}
+
+h1 {
+    font-weight: 1000;
+    font-family: 'Open Sans', sans-serif;
+    color: #4e4e4e;
+}
+
+.pagination {
+    padding-top: 15px;
+}
