@@ -22,7 +22,7 @@ class Hero(models.Model):
     class Meta:
         verbose_name = 'Hero'
         verbose_name_plural = 'Hero'
-        ordering = ['title', 'created_at']
+        # ordering = ['title', 'created_at']
 
 
 class Category(models.Model):

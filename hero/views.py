@@ -6,26 +6,34 @@ from django.views.generic import ListView, DetailView, CreateView
 
 from .forms import AddArticleForm
 from .models import Hero, Category
-
-menu = [
-    {'title': 'About', 'url': 'about'},
-    {'title': 'Add article', 'url': 'article'},
-    {'title': 'Contact me', 'url': 'contact'},
-    {'title': 'Login', 'url': 'login'},
-]
+from .utils import menu, DataMixin
 
 
-class HomeViewList(ListView):
+class HomeViewList(DataMixin, ListView):
     model = Hero
     template_name = 'hero/index.html'
     context_object_name = 'persons'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Main page'
-        context['cat_selected'] = 0
-        return context
+        # print('+++++++', list(context.items()))
+        # +++++++ [('paginator', None), ('page_obj', None), ('is_paginated', False), ('object_list',
+        # < QuerySet[< Hero: The Thing >, < Hero: Human Torch >, < Hero: Superman >, < Hero: Falcon >] >),
+        #  ('persons', < QuerySet[< Hero: The Thing >, < Hero: Human Torch >, < Hero: Superman >, < Hero: Falcon >] >),
+        #  ('view', < hero.views.HomeViewList object at 0x0000023C57CDF8E0 >)]
+        con_def = self.get_user_context(title='Main menu')
+        # print('=============', list(con_def.items()))
+        # [('title', 'Main menu'), ('menu',
+        # [{'title': 'About', 'url': 'about'}, {'title': 'Add article', 'url': 'article'},
+        # {'title': 'Contact me', 'url': 'contact'}, {'title': 'Login', 'url': 'login'}]),
+        # ('cats', < QuerySet[< Category: fly >, < Category: fire resistant >, < Category: fly and fire resistant >] >),
+        # ('cat_selected', 0)]
+
+        return dict(list(context.items()) + list(con_def.items()))
+        # context['menu'] = menu
+        # context['title'] = 'Main page'
+        # context['cat_selected'] = 0
+        # return context
 
     def get_queryset(self):
         return Hero.objects.filter(is_published=True)
@@ -128,7 +136,6 @@ class AddArticleCreateView(CreateView):
         context['menu'] = menu
         context['title'] = 'Add Article'
         return context
-
 
 # class AddArticleView(View):
 #     def get(self, request, *args, **kwargs):
