@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from .models import Category, Hero
@@ -30,6 +32,38 @@ class AddArticleForm(forms.ModelForm):
             'id': "inputContent",
             'placeholder': "write article"
         }), label='Descriptions')
+
+
+class SignUpForm(UserCreationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'placeholder': "write username",
+            'class': "form-input"}),
+        label='username'
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'placeholder': "email",
+            'class': "form-input"}),
+        label='email'
+    )
+
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'placeholder': "password",
+            'class': "form-input"}),
+        label='password'
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'placeholder': "password",
+            'class': "form-input"}),
+        label='password'
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
     # title = forms.CharField(
     #     max_length=250,

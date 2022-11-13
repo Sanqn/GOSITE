@@ -1,0 +1,62 @@
+{% load static %}
+
+<!--<div class="pagination">-->
+<!--    <span class="step-links">-->
+<!--        {% if page_obj.has_previous %}-->
+<!--            <a href="?page=1">&laquo; first</a>-->
+<!--            <a href="?page={{ page_obj.previous_page_number }}">previous</a>-->
+<!--        {% endif %}-->
+
+<!--        <span class="current">-->
+<!--            {% for i in  page_obj.paginator.page_range %}-->
+<!--            {% if i == page_obj.number %}-->
+<!--            <li class="page-num">-->
+<!--                <a class="disabled">{{i}}</a>-->
+<!--            {% else %}-->
+<!--                <a href="?page={{ i }}">{{i}}</a>-->
+<!--            {% endif %}-->
+<!--                </li>-->
+<!--            {% endfor %}-->
+<!--        </span>-->
+
+<!--        {% if page_obj.has_next %}-->
+<!--            <a href="?page={{ page_obj.next_page_number }}">next</a>-->
+<!--            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>-->
+<!--        {% else %}-->
+<!--             <a class="disabled">last</a>-->
+<!--        {% endif %}-->
+<!--    </span>-->
+<!--</div>-->
+{% if page_obj.has_other_pages %}
+<nav class="list-pages">
+    <ul>
+        {% if page_obj.has_previous %}
+        <li class="page-num">
+            <a href="?page=1">first</a>
+        </li>
+        {% else %}
+        <li class="page-num page-num-selected">
+            <a>first</a>
+        </li>
+        {% endif %}
+        {% for i in page_obj.paginator.page_range %}
+        {% if i == page_obj.number %}
+        <li class="page-num page-num-selected">{{i}}</li>
+        {% elif  i >= page_obj.number|add:-2 and i <= page_obj.number|add:2 %}
+        <li class="page-num">
+            <a href="?page={{i}}">{{i}}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-num">
+            <a href="?page={{ page_obj.paginator.num_pages }}">last</a>
+        </li>
+        {% else %}
+        <li class="page-num page-num-selected">
+            <a>last</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

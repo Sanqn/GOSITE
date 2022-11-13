@@ -1,15 +1,21 @@
+from django.contrib.auth import logout, login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView
 
-from .forms import AddArticleForm
+from .forms import AddArticleForm, SignUpForm
 from .models import Hero, Category
 from .utils import menu, DataMixin
 
 
 class HomeViewList(DataMixin, ListView):
+    # paginate_by = 1  # post this paginator in utils DataMixin
     model = Hero
     template_name = 'hero/index.html'
     context_object_name = 'persons'
@@ -29,7 +35,8 @@ class HomeViewList(DataMixin, ListView):
         # ('cats', < QuerySet[< Category: fly >, < Category: fire resistant >, < Category: fly and fire resistant >] >),
         # ('cat_selected', 0)]
 
-        return dict(list(context.items()) + list(con_def.items()))
+        # return dict(list(context.items()) + list(con_def.items()))
+        return context | con_def
         # context['menu'] = menu
         # context['title'] = 'Main page'
         # context['cat_selected'] = 0
@@ -51,7 +58,7 @@ class HomeViewList(DataMixin, ListView):
 #             'cat_selected': 0
 #         })
 
-class PostDetailView(DetailView):
+class PostDetailView(DataMixin, DetailView):
     model = Hero
     template_name = 'hero/post.html'
     slug_url_kwarg = 'post_slug'
@@ -60,10 +67,12 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(context)
-        context['menu'] = menu
-        context['title'] = f'Category {context["person"]}'
-        return context
+        cat_menu = self.get_user_context(title=context["person"])
+        return dict(list(context.items()) + list(cat_menu.items()))
+        # print(context)
+        # context['menu'] = menu
+        # context['title'] = f'Category {context["person"]}'
+        # return context
 
 
 # class PostView(View):
@@ -80,7 +89,8 @@ class PostDetailView(DetailView):
 #         })
 
 
-class ShowCatViewList(ListView):
+class ShowCatViewList(DataMixin, ListView):
+    # paginate_by = 1  # post this paginator in utils DataMixin
     model = Hero
     template_name = 'hero/index.html'
     context_object_name = 'persons'
@@ -92,10 +102,14 @@ class ShowCatViewList(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = f'Category {context["persons"][0].category}'
-        context['cat_selected'] = context['persons'][0].category_id
-        return context
+        cat_menu = self.get_user_context(title=f'Category {context["persons"][0].category}',
+                                         cat_selected=context['persons'][0].category_id)
+
+        return dict(list(context.items()) + list(cat_menu.items()))
+        # context['menu'] = menu
+        # context['title'] = f'Category {context["persons"][0].category}'
+        # context['cat_selected'] = context['persons'][0].category_id
+        # return context
         # print('1111111', context) 1111111 {'paginator': None, 'page_obj': None, 'is_paginated': False,
         # 'object_list': <QuerySet [<Hero: Ironman>, <Hero: Superman>]>,
         # 'persons': <QuerySet [<Hero: Ironman>, <Hero: Superman>]>,
@@ -123,19 +137,59 @@ class ShowCatViewList(ListView):
 
 class AboutView(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse('About')
+        all_hero = Hero.objects.all()
+        paginator = Paginator(all_hero, 3)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'hero/about.html', context={'page_obj': page_obj, 'menu': menu})
 
 
-class AddArticleCreateView(CreateView):
+class AddArticleCreateView(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddArticleForm
     template_name = 'hero/addarticle.html'
     success_url = reverse_lazy('hero')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Add Article'
-        return context
+        cat_menu = self.get_user_context(title='Add Article')
+        return dict(list(context.items()) + list(cat_menu.items()))
+        # context['menu'] = menu
+        # context['title'] = 'Add Article'
+        # return context
+
+
+class SignUpView(DataMixin, CreateView):
+    form_class = SignUpForm
+    template_name = 'hero/signup1.html'
+    success_url = reverse_lazy('signin')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat_menu = self.get_user_context(title='SignUp')
+        return context | cat_menu
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('hero')
+
+
+class SignInView(DataMixin, LoginView):
+    form_class = AuthenticationForm
+    template_name = 'hero/signin.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat_menu = self.get_user_context(title='SignIn')
+        return context | cat_menu
+
+    def get_success_url(self):
+        return reverse_lazy('hero')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('hero')
 
 # class AddArticleView(View):
 #     def get(self, request, *args, **kwargs):

@@ -18,16 +18,17 @@
             {% block mainmenu %}
             <div class="header">
                 <ul id="mainmenu" class="mainmenu">
-                    <li class="logo"><a href="#">
+                    <li class="logo"><a href="{% url 'hero' %}">
                         <div class="logo"></div>
                     </a></li>
                     {% for m in menu %}
-                    {% if not forloop.last %}
                     <li><a href="{% url m.url %}">{{m.title}}</a></li>
-                    {% else %}
-                    <li class="last"><a href="{% url m.url %}">{{m.title}}</a></li>
-                    {% endif %}
                     {% endfor %}
+                    {% if request.user.is_authenticated %}
+                    <li class="last"><a href="#">{{ user.username }}</a> | <a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                    <li class="last"><a href="{% url 'signup1' %}">Sign Up</a> | <a href="{% url 'signin' %}">Login</a></li>
+                    {% endif %}
                 </ul>
                 <div class="clear"></div>
             </div>
@@ -44,10 +45,12 @@
                             {% endif %}
 
                             {% for c in cats %}
+                            {% if c.hero__count > 0 %}
                             {% if c.pk == cat_selected %}
                             <li class="selected">{{c.name}}</li>
                             {% else %}
                             <li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
+                            {% endif %}
                             {% endif %}
                             {% endfor %}
 
@@ -71,6 +74,8 @@
                         {% endblock %}
 
                         <!-- End content -->
+                        {% block pagination %}
+                        {% endblock %}
 
                     </td>
                 </tr>

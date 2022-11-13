@@ -57,7 +57,7 @@ class SignUpAccessView(View):
 class SignInView(View):
     def get(self, request, *args, **kwargs):
         form = SignInForm()
-        return render(request, 'blog/signin.html', context={
+        return render(request, 'blog/signup1.html', context={
             'form': form
         })
 
@@ -73,7 +73,7 @@ class SignInView(View):
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect('/')
-        return render(request, 'blog/signin.html', context={
+        return render(request, 'blog/signup1.html', context={
             'form': form,
         })
 
