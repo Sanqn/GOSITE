@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_extensions',
     "crispy_forms",
     "crispy_bootstrap5",
+    "captcha",
 ]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
@@ -188,3 +189,10 @@ LOGOUT_REDIRECT_URL = "/"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'setsite_cache'),
+    }
+}

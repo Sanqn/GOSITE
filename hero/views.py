@@ -7,9 +7,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 
-from .forms import AddArticleForm, SignUpForm
+from .forms import AddArticleForm, SignUpForm, ContactForm
 from .models import Hero, Category
 from .utils import menu, DataMixin
 
@@ -105,7 +105,6 @@ class ShowCatViewList(DataMixin, ListView):
         c = Category.objects.get(slug=self.kwargs['cat_slug'])
         cat_menu = self.get_user_context(title=f'Category {c.name}',
                                          cat_selected=c.pk)
-
         return dict(list(context.items()) + list(cat_menu.items()))
         # context['menu'] = menu
         # context['title'] = f'Category {context["persons"][0].category}'
@@ -191,6 +190,22 @@ class SignInView(DataMixin, LoginView):
 def logout_user(request):
     logout(request)
     return redirect('hero')
+
+
+class ContactView(DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'hero/contact.html'
+    success_url = reverse_lazy('hero')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat_menu = self.get_user_context(title='Contact')
+        return context | cat_menu
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        print(form.cleaned_data['name'])
+        return redirect('hero')
 
 # class AddArticleView(View):
 #     def get(self, request, *args, **kwargs):

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Count
 
 from .models import Category
@@ -16,7 +17,10 @@ class DataMixin:
         #  Собираем context, изначально получаем в kwargs {'title': 'Main menu'}
         #  После добавляем в context menu и категории и возвращаем во view
         context = kwargs
-        cats = Category.objects.annotate(Count('hero'))
+        cats = cache.get('category')
+        if not cats:
+            cats = Category.objects.annotate(Count('hero'))
+            cache.set('category', cats, 60)
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:
             user_menu.pop(1)

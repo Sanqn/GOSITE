@@ -25,5 +25,9 @@ urlpatterns = [
                   path("ckeditor/", include('ckeditor_uploader.urls')),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+urlpatterns += [
+    path('captcha/', include('captcha.urls')),
+]
+
 if settings.DEBUG:
     urlpatterns = [path('__debug__/', include('debug_toolbar.urls'))] + urlpatterns
