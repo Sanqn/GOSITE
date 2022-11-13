@@ -1,15 +1,21 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from .models import Hero, Category
 
 
 class HeroAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'slug', 'image', 'created_at', 'time_update', 'category', 'is_published']
+    list_display = ['id', 'title', 'slug', 'get_html_url', 'category', 'is_published']
     list_display_links = ['id', 'title']
     search_fields = ['title']
     list_editable = ['is_published']
     list_filter = ['is_published', 'created_at']
     prepopulated_fields = {'slug': ('title',)}
+
+    def get_html_url(self, object):
+        if object.image:
+            return mark_safe(f"<img src='{object.image.url}' width=50>")
+    get_html_url.short_description = 'Picture'
 
 
 admin.site.register(Hero, HeroAdmin)
