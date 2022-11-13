@@ -11,6 +11,8 @@ class HeroAdmin(admin.ModelAdmin):
     list_editable = ['is_published']
     list_filter = ['is_published', 'created_at']
     prepopulated_fields = {'slug': ('title',)}
+    fields = ['title', 'slug', 'image', 'get_html_url', 'category', 'is_published', 'created_at', 'time_update']
+    readonly_fields = ['get_html_url', 'created_at', 'time_update']
 
     def get_html_url(self, object):
         if object.image:
