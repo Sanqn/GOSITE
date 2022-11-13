@@ -43,7 +43,7 @@ class HomeViewList(DataMixin, ListView):
         # return context
 
     def get_queryset(self):
-        return Hero.objects.filter(is_published=True)
+        return Hero.objects.filter(is_published=True).select_related('category')
 
 
 # class HomeView(View):
@@ -98,12 +98,13 @@ class ShowCatViewList(DataMixin, ListView):
 
     def get_queryset(self):
         print(self.kwargs)  # {'cat_slug': 'fire-resistant'}
-        return Hero.objects.filter(category__slug=self.kwargs['cat_slug'], is_published=True)
+        return Hero.objects.filter(category__slug=self.kwargs['cat_slug'], is_published=True).select_related('category')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        cat_menu = self.get_user_context(title=f'Category {context["persons"][0].category}',
-                                         cat_selected=context['persons'][0].category_id)
+        c = Category.objects.get(slug=self.kwargs['cat_slug'])
+        cat_menu = self.get_user_context(title=f'Category {c.name}',
+                                         cat_selected=c.pk)
 
         return dict(list(context.items()) + list(cat_menu.items()))
         # context['menu'] = menu
