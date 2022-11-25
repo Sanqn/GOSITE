@@ -7,7 +7,7 @@ from .models import Hero, Category
 class HeroAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'slug', 'get_html_url', 'category', 'is_published']
     list_display_links = ['id', 'title']
-    search_fields = ['title']
+    search_fields = ['title', 'slug']
     list_editable = ['is_published']
     list_filter = ['is_published', 'created_at']
     prepopulated_fields = {'slug': ('title',)}
